@@ -20,14 +20,14 @@ export const CategoryBadge: React.FC<CategoryBadgeProps> = ({
   const displayEmoji = showEmoji && showIcon;
 
   const sizeClasses = {
-    sm: 'px-2 py-0.5 text-[11px] font-semibold gap-1 rounded-lg',
-    md: 'px-2.5 py-1 text-xs font-semibold gap-1.5 rounded-xl',
-    lg: 'px-3 py-1.5 text-xs font-bold gap-2 rounded-xl',
+    sm: 'px-2 py-0.5 text-[11px] font-semibold gap-1 rounded-md',
+    md: 'px-2.5 py-1 text-xs font-semibold gap-1.5 rounded-lg',
+    lg: 'px-3 py-1.5 text-xs font-bold gap-2 rounded-lg',
   }[size];
 
   return (
     <span
-      className={`inline-flex items-center border ${config.badgeBg} ${config.badgeText} ${config.badgeBorder} dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 ${sizeClasses} shadow-2xs whitespace-nowrap`}
+      className={`inline-flex items-center border ${config.badgeBg} ${config.badgeText} ${config.badgeBorder} ${sizeClasses} whitespace-nowrap font-medium tracking-tight`}
     >
       {displayEmoji && <span className="text-xs">{config.emoji}</span>}
       <span>{config.label}</span>
