@@ -74,13 +74,17 @@ export function validateExpenseInput(
   return { valid: true, parsedAmount };
 }
 
-export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses: Expense[]; isDemo: boolean }> {
+export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses: Expense[]; isDemo: boolean; error?: string }> {
   const configured = isSupabaseConfigured();
 
   if (configured) {
     try {
       const supabase = createClient();
-      const { data: userData } = await supabase.auth.getUser();
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.warn('Supabase auth session notice:', userError.message);
+      }
 
       if (userData?.user) {
         let query = supabase
@@ -104,7 +108,12 @@ export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses:
 
         const { data, error } = await query;
 
-        if (!error && data && data.length >= 0) {
+        if (error) {
+          console.error('Supabase query error:', error.message);
+          return { expenses: [], isDemo: false, error: `Database Fetch Error: ${error.message}` };
+        }
+
+        if (data) {
           let result = data as Expense[];
           if (filter?.search) {
             const s = filter.search.toLowerCase();
@@ -118,7 +127,7 @@ export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses:
           return { expenses: result, isDemo: false };
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn('Supabase fetch exception:', err);
     }
   }
@@ -170,31 +179,40 @@ export async function addExpense(
   if (configured) {
     try {
       const supabase = createClient();
-      const { data: userData } = await supabase.auth.getUser();
+      const { data: userData, error: userErr } = await supabase.auth.getUser();
 
-      if (userData?.user) {
-        const newExpense = {
-          amount: amountNum,
-          category: formData.category,
-          date: formData.date,
-          note: formData.note ? formData.note.trim() : null,
-          user_id: userData.user.id,
+      if (userErr || !userData?.user) {
+        return { success: false, error: 'Supabase session not active. Please sign in via the Login page.' };
+      }
+
+      const newExpense = {
+        amount: amountNum,
+        category: formData.category,
+        date: formData.date,
+        note: formData.note ? formData.note.trim() : null,
+        user_id: userData.user.id,
+      };
+
+      const { data, error } = await supabase.from('expenses').insert([newExpense]).select().single();
+
+      if (error) {
+        console.error('Supabase Insert Error:', error);
+        return {
+          success: false,
+          error: `Cloud Database Error (${error.code || 'RLS'}): ${error.message}`,
         };
+      }
 
-        const { data, error } = await supabase.from('expenses').insert([newExpense]).select().single();
-
-        if (!error && data) {
-          return { success: true, data: data as Expense };
-        } else if (error) {
-          console.warn('Supabase insert error, saving to user local storage:', error.message);
-        }
+      if (data) {
+        return { success: true, data: data as Expense };
       }
     } catch (e: any) {
-      console.warn('Supabase insert exception, using local store:', e);
+      console.error('Supabase insert exception:', e);
+      return { success: false, error: e?.message || 'Database connection error' };
     }
   }
 
-  // Resilient fallback storage: save to user-scoped local storage
+  // Local Storage mode when Supabase is explicitly NOT configured
   const items = getLocalUserExpenses(storageKey);
   const created: Expense = {
     id: 'exp-' + Date.now(),
@@ -222,7 +240,6 @@ export async function updateExpense(
 
   const amountNum = val.parsedAmount;
   const configured = isSupabaseConfigured();
-  const { storageKey } = await getUserStorageKey();
 
   if (configured) {
     try {
@@ -245,16 +262,22 @@ export async function updateExpense(
           .select()
           .single();
 
-        if (!error && data) {
+        if (error) {
+          return { success: false, error: `Cloud Update Error: ${error.message}` };
+        }
+
+        if (data) {
           return { success: true, data: data as Expense };
         }
       }
     } catch (e: any) {
-      console.warn('Supabase update exception:', e);
+      return { success: false, error: e?.message || 'Database connection error' };
     }
   }
 
+  const { storageKey } = await getUserStorageKey();
   const items = getLocalUserExpenses(storageKey);
+
   const index = items.findIndex((i) => i.id === id);
   if (index === -1) {
     return { success: false, error: 'Expense not found.' };
@@ -274,7 +297,6 @@ export async function updateExpense(
 
 export async function deleteExpense(id: string): Promise<{ success: boolean; error?: string }> {
   const configured = isSupabaseConfigured();
-  const { storageKey } = await getUserStorageKey();
 
   if (configured) {
     try {
@@ -288,19 +310,64 @@ export async function deleteExpense(id: string): Promise<{ success: boolean; err
           .eq('id', id)
           .eq('user_id', userData.user.id);
 
-        if (!error) {
-          return { success: true };
+        if (error) {
+          return { success: false, error: `Cloud Delete Error: ${error.message}` };
         }
+
+        return { success: true };
       }
     } catch (e: any) {
-      console.warn('Supabase delete exception:', e);
+      return { success: false, error: e?.message || 'Database connection error' };
     }
   }
 
+  const { storageKey } = await getUserStorageKey();
   let items = getLocalUserExpenses(storageKey);
   items = items.filter((i) => i.id !== id);
   saveLocalUserExpenses(storageKey, items);
   return { success: true };
+}
+
+// Utility: Sync any local expenses saved in browser to Supabase Cloud Database
+export async function syncLocalExpensesToCloud(): Promise<{ success: boolean; count: number; error?: string }> {
+  const configured = isSupabaseConfigured();
+  if (!configured) return { success: false, count: 0, error: 'Supabase is not configured.' };
+
+  try {
+    const supabase = createClient();
+    const { data: userData } = await supabase.auth.getUser();
+
+    if (!userData?.user) {
+      return { success: false, count: 0, error: 'No active user session in Supabase Auth.' };
+    }
+
+    const { storageKey } = await getUserStorageKey();
+    const localItems = getLocalUserExpenses(storageKey);
+
+    if (localItems.length === 0) {
+      return { success: true, count: 0 };
+    }
+
+    const payload = localItems.map((item) => ({
+      amount: item.amount,
+      category: item.category,
+      date: item.date,
+      note: item.note ? item.note.trim() : null,
+      user_id: userData.user.id,
+    }));
+
+    const { error } = await supabase.from('expenses').insert(payload);
+
+    if (error) {
+      return { success: false, count: 0, error: `Sync Failed (${error.code || 'RLS'}): ${error.message}` };
+    }
+
+    // Clear local items once synced to cloud
+    saveLocalUserExpenses(storageKey, []);
+    return { success: true, count: localItems.length };
+  } catch (e: any) {
+    return { success: false, count: 0, error: e?.message || 'Cloud sync error' };
+  }
 }
 
 export function calculateMonthlyStats(
