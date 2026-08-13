@@ -82,7 +82,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       const supabase = createClient();
       await supabase.auth.signOut();
     }
-    router.push('/login');
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    } else {
+      router.push('/login');
+    }
   };
 
   const navItems = [
