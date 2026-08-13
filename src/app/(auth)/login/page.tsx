@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
-import { syncLocalExpensesToCloud } from '@/lib/storage';
 import { Wallet, Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
@@ -37,8 +36,6 @@ export default function LoginPage() {
       if (signInError) {
         setError(signInError.message);
       } else {
-        // Automatically sync any local expenses saved in browser to Supabase Cloud Database on login
-        await syncLocalExpensesToCloud();
         window.location.href = '/dashboard';
       }
     } catch (err: any) {

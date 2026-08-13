@@ -14,15 +14,12 @@ import {
   ChevronRight,
   Plus,
   Trash2,
-  CloudCheck,
-  RefreshCw,
 } from 'lucide-react';
 import { getActiveCategories, getCategoryConfig } from '@/lib/constants';
 import { ExpenseCategory } from '@/lib/types';
 import { AddCategoryModal } from './AddCategoryModal';
 import { DeleteCategoryModal } from './DeleteCategoryModal';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
-import { syncLocalExpensesToCloud } from '@/lib/storage';
 
 interface SidebarProps {
   expensesCount?: number;
@@ -39,7 +36,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectCategory,
   onSearchChange,
   searchTerm = '',
-  onRefreshData,
 }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -47,8 +43,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [isAddCatModalOpen, setIsAddCatModalOpen] = useState(false);
   const [isDeleteCatModalOpen, setIsDeleteCatModalOpen] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
-  const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
   const configured = isSupabaseConfigured();
 
@@ -81,25 +75,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     });
     return () => authListener.subscription.unsubscribe();
   }, [configured, loadCategories]);
-
-  const handleSyncToCloud = async () => {
-    setIsSyncing(true);
-    setSyncMessage(null);
-    try {
-      const res = await syncLocalExpensesToCloud();
-      if (res.success) {
-        setSyncMessage(res.count > 0 ? `Synced ${res.count} items to cloud!` : 'Cloud is up to date.');
-        if (onRefreshData) onRefreshData();
-      } else {
-        setSyncMessage(res.error || 'Sync failed.');
-      }
-    } catch (e: any) {
-      setSyncMessage(e?.message || 'Sync error.');
-    } finally {
-      setIsSyncing(false);
-      setTimeout(() => setSyncMessage(null), 4000);
-    }
-  };
 
   const handleLogout = async () => {
     if (typeof window !== 'undefined') {
@@ -213,7 +188,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             </div>
 
-            <div className="space-y-0.5 max-h-[240px] overflow-y-auto pr-1">
+            <div className="space-y-0.5 max-h-[260px] overflow-y-auto pr-1">
               {categories.map((cat) => {
                 const config = getCategoryConfig(cat);
                 const isSelected = selectedCategory === cat;
@@ -239,33 +214,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* User Footer & Cloud Status */}
+        {/* User Footer */}
         <div className="pt-3 border-t border-white/10 space-y-2">
-          {configured && userEmail ? (
-            <div className="flex items-center justify-between p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300 font-medium">
-              <div className="flex items-center gap-1.5">
-                <CloudCheck size={14} className="text-emerald-400 shrink-0" />
-                <span>Cloud Synced</span>
-              </div>
-              <button
-                onClick={handleSyncToCloud}
-                disabled={isSyncing}
-                className="p-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 transition-colors"
-                title="Sync local data to cloud database"
-              >
-                <RefreshCw size={12} className={isSyncing ? 'animate-spin' : ''} />
-              </button>
-            </div>
-          ) : (
+          {!configured && (
             <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[10px] text-amber-300 font-medium flex items-center gap-1.5">
               <Sparkles size={12} className="shrink-0 text-amber-400" />
               <span>Local Demo Mode</span>
-            </div>
-          )}
-
-          {syncMessage && (
-            <div className="text-[10px] text-center text-blue-300 font-semibold truncate">
-              {syncMessage}
             </div>
           )}
 

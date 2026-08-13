@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
-import { syncLocalExpensesToCloud } from '@/lib/storage';
 import { Wallet, Mail, Lock, UserPlus, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function SignupPage() {
@@ -51,7 +50,6 @@ export default function SignupPage() {
         setError(signUpError.message);
       } else {
         if (data.session) {
-          await syncLocalExpensesToCloud();
           window.location.href = '/dashboard';
         } else {
           setSuccess('Account created! Check your email to confirm registration before signing in.');
