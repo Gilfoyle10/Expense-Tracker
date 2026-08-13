@@ -92,6 +92,17 @@
 
 ---
 
+## ⚠️ Known Limitations & Storage Scoping
+
+1. **Browser LocalStorage Scope**:
+   - Offline LocalStorage demo data is stored per browser/device. Cloud multi-device synchronization requires connected Supabase environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) on Vercel.
+2. **Supabase Auth Email Confirm Toggle**:
+   - In Supabase development mode, if *"Confirm email"* is enabled under Auth Providers, new user signups require email link confirmation before first sign-in.
+3. **Next.js Middleware Proxy Warning**:
+   - Terminal outputs a minor Next.js 16 deprecation notice for middleware conventions, which does not impact production execution.
+
+---
+
 ## 📘 Comprehensive Project Documentation
 
 For full technical specifications, business rules, test cases, and AI prompts, consult the master documentation:
