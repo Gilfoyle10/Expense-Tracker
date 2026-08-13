@@ -12,7 +12,6 @@ import {
   X,
   Plus,
 } from 'lucide-react';
-import { ThemeToggle } from './ThemeToggle';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 
 interface NavbarProps {
@@ -54,8 +53,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAddModal }) => {
         </Link>
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
-
           {onOpenAddModal && (
             <button
               onClick={onOpenAddModal}

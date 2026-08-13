@@ -19,7 +19,6 @@ import { getActiveCategories, getCategoryConfig } from '@/lib/constants';
 import { ExpenseCategory } from '@/lib/types';
 import { AddCategoryModal } from './AddCategoryModal';
 import { DeleteCategoryModal } from './DeleteCategoryModal';
-import { ThemeToggle } from './ThemeToggle';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 
 interface SidebarProps {
@@ -95,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <>
       <aside className="w-64 shrink-0 bg-[#16161A] border-r border-white/10 flex flex-col justify-between h-full p-4 select-none">
         <div className="space-y-5 overflow-y-auto">
-          {/* Top App Logo & Theme Toggle */}
+          {/* Top App Logo */}
           <div className="flex items-center justify-between px-1 pt-1">
             <Link href="/dashboard" className="flex items-center gap-2.5 group">
               <div className="w-8 h-8 rounded-xl bg-white text-slate-950 flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
@@ -105,8 +104,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 ExpenseTrack
               </span>
             </Link>
-
-            <ThemeToggle />
           </div>
 
           {/* Search Bar Input */}
