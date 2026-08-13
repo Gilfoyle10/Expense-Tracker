@@ -27,7 +27,7 @@ export const CategoryBadge: React.FC<CategoryBadgeProps> = ({
 
   return (
     <span
-      className={`inline-flex items-center border ${config.badgeBg} ${config.badgeText} ${config.badgeBorder} ${sizeClasses} shadow-2xs whitespace-nowrap`}
+      className={`inline-flex items-center border ${config.badgeBg} ${config.badgeText} ${config.badgeBorder} dark:bg-slate-800 dark:text-slate-200 dark:border-slate-700 ${sizeClasses} shadow-2xs whitespace-nowrap`}
     >
       {displayEmoji && <span className="text-xs">{config.emoji}</span>}
       <span>{config.label}</span>

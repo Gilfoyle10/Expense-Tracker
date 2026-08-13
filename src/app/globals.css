@@ -12,6 +12,15 @@
     --accent-yellow-hover: #E5B324;
   }
 
+  .dark {
+    --bg-canvas: #0B0F19;
+    --bg-card: #161F30;
+    --bg-sidebar: #0F172A;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --text-primary: #F8FAFC;
+    --text-secondary: #94A3B8;
+  }
+
   body {
     background-color: var(--bg-canvas);
     color: var(--text-primary);
@@ -19,15 +28,20 @@
     min-height: 100vh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 }
 
-/* Light SaaS Card Containers */
+/* Light & Dark SaaS Card Containers */
 .app-card {
-  background-color: #FFFFFF;
+  background-color: var(--bg-card);
   border-radius: 1.5rem;
-  border: 1px solid rgba(226, 232, 226, 0.8);
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03), 0 4px 12px -2px rgba(0, 0, 0, 0.015);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.03);
+}
+
+.dark .app-card {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.35);
 }
 
 .app-card-hover {
@@ -35,12 +49,16 @@
 }
 
 .app-card-hover:hover {
-  border-color: #D1D5DB;
-  box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
+  box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.06);
 }
 
-/* Light Input Styles */
+.dark .app-card-hover:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.45);
+}
+
+/* Light & Dark Input Styles */
 .light-input {
   background-color: #F8F9F8;
   border: 1px solid #E2E4E2;
@@ -48,26 +66,35 @@
   transition: all 0.2s ease;
 }
 
-.light-input:focus {
-  outline: none;
-  background-color: #FFFFFF;
-  border-color: #2563EB;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+.dark .light-input {
+  background-color: #0F172A;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #F8FAFC;
 }
 
-/* Custom Soft Scrollbar */
+.light-input:focus {
+  outline: none;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Scrollbar Customization */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #F4F6F4;
+  background: var(--bg-canvas);
 }
 
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
   border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
 }
 
 ::-webkit-scrollbar-thumb:hover {

@@ -4,30 +4,28 @@ import React, { useEffect, useState } from 'react';
 import { Sun, Moon } from 'lucide-react';
 
 export const ThemeToggle: React.FC = () => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('expense_tracker_theme');
-    // Default to dark theme unless explicitly set to light
-    if (savedTheme === 'light') {
-      setTheme('light');
-      document.documentElement.classList.remove('dark');
-    } else {
+    const savedTheme = localStorage.getItem('expense_tracker_theme_v2');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       setTheme('dark');
       document.documentElement.classList.add('dark');
-      localStorage.setItem('expense_tracker_theme', 'dark');
+    } else {
+      setTheme('light');
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
   const toggleTheme = () => {
-    if (theme === 'dark') {
-      setTheme('light');
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('expense_tracker_theme', 'light');
-    } else {
+    if (theme === 'light') {
       setTheme('dark');
       document.documentElement.classList.add('dark');
-      localStorage.setItem('expense_tracker_theme', 'dark');
+      localStorage.setItem('expense_tracker_theme_v2', 'dark');
+    } else {
+      setTheme('light');
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('expense_tracker_theme_v2', 'light');
     }
   };
 
@@ -35,18 +33,18 @@ export const ThemeToggle: React.FC = () => {
     <button
       onClick={toggleTheme}
       type="button"
-      className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-700 dark:border-slate-700 bg-slate-800 dark:bg-slate-800 text-slate-200 dark:text-slate-200 text-xs font-semibold hover:bg-slate-700 transition-all shadow-2xs select-none"
-      title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-700 transition-all shadow-2xs select-none"
+      title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
     >
-      {theme === 'dark' ? (
+      {theme === 'light' ? (
         <>
-          <Sun size={14} className="text-amber-400 shrink-0" />
-          <span>Light</span>
+          <Moon size={14} className="text-indigo-600 shrink-0" />
+          <span>Dark</span>
         </>
       ) : (
         <>
-          <Moon size={14} className="text-indigo-400 shrink-0" />
-          <span>Dark</span>
+          <Sun size={14} className="text-amber-400 shrink-0" />
+          <span>Light</span>
         </>
       )}
     </button>

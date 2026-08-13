@@ -145,8 +145,8 @@ export default function ExpensesPage() {
   const totalFilteredSum = expenses.reduce((sum, item) => sum + Number(item.amount), 0);
 
   return (
-    <div className="min-h-screen bg-[#F4F6F4] text-slate-900 p-2 sm:p-4 lg:p-5 flex items-center justify-center font-sans">
-      <div className="max-w-[1500px] w-full h-[calc(100vh-2.5rem)] min-h-[650px] bg-white rounded-3xl border border-[#E2E8E2] shadow-xl flex flex-col md:flex-row overflow-hidden">
+    <div className="min-h-screen bg-[#F4F6F4] dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 p-2 sm:p-4 lg:p-5 flex items-center justify-center font-sans">
+      <div className="max-w-[1500px] w-full h-[calc(100vh-2.5rem)] min-h-[650px] bg-white dark:bg-[#161F30] rounded-3xl border border-[#E2E8E2] dark:border-slate-800 shadow-xl flex flex-col md:flex-row overflow-hidden">
         {/* Left Sidebar */}
         <div className="hidden md:block h-full">
           <Sidebar
@@ -162,34 +162,34 @@ export default function ExpensesPage() {
         <Navbar onOpenAddModal={handleOpenAdd} />
 
         {/* Center Content */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 bg-white">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 bg-white dark:bg-[#161F30]">
           {/* Header Banner */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+              <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                 Transactions
               </h1>
-              <span className="px-3 py-0.5 rounded-full text-sm font-extrabold bg-slate-100 text-slate-700 border border-slate-200">
+              <span className="px-3 py-0.5 rounded-full text-sm font-extrabold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                 {expenses.length}
               </span>
             </div>
 
             <div className="flex items-center gap-2.5">
-              <div className="px-3.5 py-1.5 rounded-2xl bg-slate-50 border border-slate-200 text-right">
+              <div className="px-3.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-right">
                 <span className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
                   Total
                 </span>
-                <span className="text-sm font-black text-emerald-700">
+                <span className="text-sm font-black text-emerald-700 dark:text-emerald-400">
                   {formatCurrency(totalFilteredSum)}
                 </span>
               </div>
 
               <button
                 onClick={() => exportExpensesToCSV(expenses)}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition-all shadow-2xs"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-extrabold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50 hover:bg-emerald-100 transition-all shadow-2xs"
                 title="Export monthly report as CSV file"
               >
-                <Download size={15} className="text-emerald-600" />
+                <Download size={15} className="text-emerald-600 dark:text-emerald-400" />
                 <span className="hidden sm:inline">Export CSV</span>
               </button>
 

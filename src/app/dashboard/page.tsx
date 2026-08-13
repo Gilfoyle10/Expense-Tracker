@@ -113,8 +113,8 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F6F4] text-slate-900 p-2 sm:p-4 lg:p-5 flex items-center justify-center font-sans">
-      <div className="max-w-[1500px] w-full h-[calc(100vh-2.5rem)] min-h-[650px] bg-white rounded-3xl border border-[#E2E8E2] shadow-xl flex flex-col md:flex-row overflow-hidden">
+    <div className="min-h-screen bg-[#F4F6F4] dark:bg-[#0B0F19] text-slate-900 dark:text-slate-100 p-2 sm:p-4 lg:p-5 flex items-center justify-center font-sans">
+      <div className="max-w-[1500px] w-full h-[calc(100vh-2.5rem)] min-h-[650px] bg-white dark:bg-[#161F30] rounded-3xl border border-[#E2E8E2] dark:border-slate-800 shadow-xl flex flex-col md:flex-row overflow-hidden">
         {/* Left Sidebar */}
         <div className="hidden md:block h-full">
           <Sidebar
@@ -130,16 +130,16 @@ export default function DashboardPage() {
         <Navbar onOpenAddModal={() => setIsAddModalOpen(true)} />
 
         {/* Center Main Dashboard Area */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 bg-white">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 space-y-6 bg-white dark:bg-[#161F30]">
           {isLoading ? (
             <div className="space-y-6">
-              <div className="h-16 rounded-2xl bg-slate-100 animate-pulse" />
+              <div className="h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="h-28 rounded-2xl bg-slate-100 animate-pulse" />
+                  <div key={i} className="h-28 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
                 ))}
               </div>
-              <div className="h-64 rounded-2xl bg-slate-100 animate-pulse" />
+              <div className="h-64 rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse" />
             </div>
           ) : (
             <DashboardWidgets
