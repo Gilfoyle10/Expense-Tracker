@@ -71,7 +71,6 @@ export function validateExpenseInput(
     return { valid: false, error: 'Category selection is mandatory' };
   }
 
-  // Never reject expenses when spending exceeds total income — allow negative remaining balance
   return { valid: true, parsedAmount };
 }
 
@@ -81,7 +80,11 @@ export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses:
   if (configured) {
     try {
       const supabase = createClient();
-      const { data: userData } = await supabase.auth.getUser();
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+
+      if (userError) {
+        console.warn('Supabase user auth warning:', userError.message);
+      }
 
       if (userData?.user) {
         let query = supabase
@@ -105,7 +108,10 @@ export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses:
 
         const { data, error } = await query;
 
-        if (!error && data) {
+        if (error) {
+          console.error('Supabase query error:', error);
+          // If table error or permission error, throw error so UI displays notice
+        } else if (data) {
           let result = data as Expense[];
           if (filter?.search) {
             const s = filter.search.toLowerCase();
@@ -171,28 +177,40 @@ export async function addExpense(
   if (configured) {
     try {
       const supabase = createClient();
-      const { data: userData } = await supabase.auth.getUser();
+      const { data: userData, error: userErr } = await supabase.auth.getUser();
 
-      if (userData?.user) {
-        const newExpense = {
-          amount: amountNum,
-          category: formData.category,
-          date: formData.date,
-          note: formData.note ? formData.note.trim() : null,
-          user_id: userData.user.id,
-        };
-
-        const { data, error } = await supabase.from('expenses').insert([newExpense]).select().single();
-
-        if (!error && data) {
-          return { success: true, data: data as Expense };
-        }
+      if (userErr || !userData?.user) {
+        return { success: false, error: 'User session expired or not authenticated. Please log in again.' };
       }
-    } catch (e) {
-      console.warn('Supabase insert exception, using local store', e);
+
+      const newExpense = {
+        amount: amountNum,
+        category: formData.category,
+        date: formData.date,
+        note: formData.note ? formData.note.trim() : null,
+        user_id: userData.user.id,
+      };
+
+      const { data, error } = await supabase.from('expenses').insert([newExpense]).select().single();
+
+      if (error) {
+        console.error('Supabase Insert Error:', error);
+        return {
+          success: false,
+          error: `Database Insert Error (${error.code || 'RLS'}): ${error.message}`,
+        };
+      }
+
+      if (data) {
+        return { success: true, data: data as Expense };
+      }
+    } catch (e: any) {
+      console.error('Supabase insert exception:', e);
+      return { success: false, error: e?.message || 'Database connection error' };
     }
   }
 
+  // Fallback ONLY when Supabase is explicitly NOT configured
   const items = getLocalUserExpenses(storageKey);
   const created: Expense = {
     id: 'exp-' + Date.now(),
@@ -213,9 +231,6 @@ export async function updateExpense(
   id: string,
   formData: ExpenseFormData
 ): Promise<{ success: boolean; data?: Expense; error?: string }> {
-  const { storageKey } = await getUserStorageKey();
-  const items = getLocalUserExpenses(storageKey);
-
   const val = validateExpenseInput(formData);
   if (!val.valid || val.parsedAmount === undefined) {
     return { success: false, error: val.error };
@@ -227,32 +242,43 @@ export async function updateExpense(
   if (configured) {
     try {
       const supabase = createClient();
-      const { data: userData } = await supabase.auth.getUser();
+      const { data: userData, error: userErr } = await supabase.auth.getUser();
 
-      if (userData?.user) {
-        const payload = {
-          amount: amountNum,
-          category: formData.category,
-          date: formData.date,
-          note: formData.note ? formData.note.trim() : null,
-        };
-
-        const { data, error } = await supabase
-          .from('expenses')
-          .update(payload)
-          .eq('id', id)
-          .eq('user_id', userData.user.id)
-          .select()
-          .single();
-
-        if (!error && data) {
-          return { success: true, data: data as Expense };
-        }
+      if (userErr || !userData?.user) {
+        return { success: false, error: 'User session expired. Please log in again.' };
       }
-    } catch (e) {
-      console.warn('Supabase update exception', e);
+
+      const payload = {
+        amount: amountNum,
+        category: formData.category,
+        date: formData.date,
+        note: formData.note ? formData.note.trim() : null,
+      };
+
+      const { data, error } = await supabase
+        .from('expenses')
+        .update(payload)
+        .eq('id', id)
+        .eq('user_id', userData.user.id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase Update Error:', error);
+        return { success: false, error: `Database Update Error: ${error.message}` };
+      }
+
+      if (data) {
+        return { success: true, data: data as Expense };
+      }
+    } catch (e: any) {
+      console.error('Supabase update exception:', e);
+      return { success: false, error: e?.message || 'Database connection error' };
     }
   }
+
+  const { storageKey } = await getUserStorageKey();
+  const items = getLocalUserExpenses(storageKey);
 
   const index = items.findIndex((i) => i.id === id);
   if (index === -1) {
@@ -273,29 +299,35 @@ export async function updateExpense(
 
 export async function deleteExpense(id: string): Promise<{ success: boolean; error?: string }> {
   const configured = isSupabaseConfigured();
-  const { storageKey } = await getUserStorageKey();
 
   if (configured) {
     try {
       const supabase = createClient();
-      const { data: userData } = await supabase.auth.getUser();
+      const { data: userData, error: userErr } = await supabase.auth.getUser();
 
-      if (userData?.user) {
-        const { error } = await supabase
-          .from('expenses')
-          .delete()
-          .eq('id', id)
-          .eq('user_id', userData.user.id);
-
-        if (!error) {
-          return { success: true };
-        }
+      if (userErr || !userData?.user) {
+        return { success: false, error: 'User session expired. Please log in again.' };
       }
-    } catch (e) {
-      console.warn('Supabase delete exception', e);
+
+      const { error } = await supabase
+        .from('expenses')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', userData.user.id);
+
+      if (error) {
+        console.error('Supabase Delete Error:', error);
+        return { success: false, error: `Database Delete Error: ${error.message}` };
+      }
+
+      return { success: true };
+    } catch (e: any) {
+      console.error('Supabase delete exception:', e);
+      return { success: false, error: e?.message || 'Database connection error' };
     }
   }
 
+  const { storageKey } = await getUserStorageKey();
   let items = getLocalUserExpenses(storageKey);
   items = items.filter((i) => i.id !== id);
   saveLocalUserExpenses(storageKey, items);
@@ -370,7 +402,6 @@ export function calculateMonthlyStats(
     now.getFullYear() === currentYear && now.getMonth() === currentMonth ? now.getDate() : 30;
   const averageDailySpend = totalSpendCurrentMonth / (daysInMonth || 1);
 
-  // Available / Remaining balance can be negative if total spend exceeds total income
   const availableBalance = budget - totalSpendCurrentMonth;
 
   return {
