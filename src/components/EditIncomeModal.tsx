@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, IndianRupee, Wallet, Check, AlertCircle } from 'lucide-react';
+import { X, Wallet, IndianRupee, AlertCircle } from 'lucide-react';
 import { getMonthlyIncome, setMonthlyIncome } from '@/lib/constants';
 
 interface EditIncomeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onIncomeUpdated: (newIncome: number) => void;
+  onIncomeUpdated: () => void;
 }
 
 export const EditIncomeModal: React.FC<EditIncomeModalProps> = ({
@@ -15,13 +15,13 @@ export const EditIncomeModal: React.FC<EditIncomeModalProps> = ({
   onClose,
   onIncomeUpdated,
 }) => {
-  const [incomeInput, setIncomeInput] = useState<string>('50000');
+  const [income, setIncome] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       const current = getMonthlyIncome();
-      setIncomeInput(current.toString());
+      setIncome(current.toString());
       setError(null);
     }
   }, [isOpen]);
@@ -32,28 +32,28 @@ export const EditIncomeModal: React.FC<EditIncomeModalProps> = ({
     e.preventDefault();
     setError(null);
 
-    const val = parseFloat(incomeInput);
-    if (isNaN(val) || val < 0) {
-      setError('Please enter a valid monthly income amount (≥ ₹0.00).');
+    const parsed = parseFloat(income);
+    if (isNaN(parsed) || parsed < 0) {
+      setError('Total income must be a valid amount (₹0.00 or higher).');
       return;
     }
 
-    setMonthlyIncome(val);
-    onIncomeUpdated(val);
+    setMonthlyIncome(parsed);
+    onIncomeUpdated();
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fade-in">
-      <div className="relative w-full max-w-md overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-          <div className="flex items-center gap-2">
-            <Wallet size={18} className="text-emerald-600" />
-            <h3 className="text-base font-extrabold text-slate-900">Configure Total Income</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-fade-in">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-[#1E1E24] text-[#F5F5F5] shadow-2xl">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-[#16161A]">
+          <div className="flex items-center gap-2 text-emerald-400">
+            <Wallet className="w-5 h-5" />
+            <h3 className="text-base font-extrabold text-[#F5F5F5]">Configure Total Income</h3>
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+            className="p-1 rounded-xl text-[#9A9AA2] hover:text-[#F5F5F5] hover:bg-white/10 transition-colors"
           >
             <X size={18} />
           </button>
@@ -61,47 +61,47 @@ export const EditIncomeModal: React.FC<EditIncomeModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {error && (
-            <div className="flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
-              <AlertCircle size={16} className="shrink-0 text-rose-500" />
+            <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs font-semibold">
+              <AlertCircle size={16} className="shrink-0 text-rose-400" />
               <span>{error}</span>
             </div>
           )}
 
+          <p className="text-xs text-[#9A9AA2]">
+            Set your monthly total income budget to accurately track your remaining balance and spending percentages.
+          </p>
+
           <div>
-            <label className="block text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-1.5">
-              Monthly Total Income (₹ INR) <span className="text-rose-500">*</span>
+            <label className="block text-[10px] font-extrabold uppercase tracking-wider text-[#9A9AA2] mb-1.5">
+              Monthly Total Income (₹ INR) <span className="text-emerald-400">*</span>
             </label>
             <div className="relative">
-              <IndianRupee size={18} className="absolute left-3.5 top-3 text-slate-400" />
+              <IndianRupee size={18} className="absolute left-3.5 top-3 text-[#9A9AA2]" />
               <input
                 type="number"
-                step="500"
+                step="0.01"
                 min="0"
-                placeholder="50000"
-                value={incomeInput}
-                onChange={(e) => setIncomeInput(e.target.value)}
+                placeholder="0.00"
+                value={income}
+                onChange={(e) => setIncome(e.target.value)}
                 required
-                className="w-full pl-10 pr-4 py-2.5 rounded-2xl light-input text-slate-900 font-extrabold text-lg focus:border-slate-900 focus:outline-none"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl light-input text-[#F5F5F5] font-extrabold text-lg focus:outline-none"
               />
             </div>
-            <p className="text-[11px] text-slate-500 mt-1.5 font-medium">
-              This sets your total monthly income budget used to calculate remaining balance & budget alerts.
-            </p>
           </div>
 
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-white/10">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-2xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-[#9A9AA2] hover:bg-white/10 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-6 py-2.5 rounded-2xl text-xs font-extrabold bg-[#FFC72C] hover:bg-[#E5B324] text-slate-950 shadow-2xs transition-all"
+              className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-extrabold bg-[#FFC72C] hover:bg-[#E5B324] text-slate-950 shadow-2xs transition-all"
             >
-              <Check size={16} />
               <span>Save Income</span>
             </button>
           </div>

@@ -21,6 +21,10 @@
     --text-secondary: #6E737B;
   }
 
+  html {
+    color-scheme: dark;
+  }
+
   body {
     background-color: var(--bg-canvas);
     color: var(--text-primary);
@@ -28,19 +32,20 @@
     min-height: 100vh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.25s ease, color 0.25s ease;
   }
 }
 
 /* Modern Productivity SaaS Card Panels */
 .app-card {
-  background-color: var(--bg-card);
+  background-color: #1E1E24;
   border-radius: 0.75rem; /* 12px smooth rounded */
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
 }
 
 .light .app-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E6E8E6;
   box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
 }
 
@@ -87,16 +92,12 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-canvas);
+  background: #121212;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #2D2D35;
   border-radius: 4px;
-}
-
-.light ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
 }
 
 ::-webkit-scrollbar-thumb:hover {
