@@ -83,7 +83,7 @@ export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses:
       const { data: userData, error: userError } = await supabase.auth.getUser();
 
       if (userError) {
-        console.warn('Supabase user auth warning:', userError.message);
+        console.warn('Supabase user auth notice:', userError.message);
       }
 
       if (userData?.user) {
@@ -109,8 +109,7 @@ export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses:
         const { data, error } = await query;
 
         if (error) {
-          console.error('Supabase query error:', error);
-          // If table error or permission error, throw error so UI displays notice
+          console.warn('Supabase fetch notice:', error.message);
         } else if (data) {
           let result = data as Expense[];
           if (filter?.search) {
@@ -125,8 +124,8 @@ export async function fetchExpenses(filter?: ExpenseFilter): Promise<{ expenses:
           return { expenses: result, isDemo: false };
         }
       }
-    } catch (err) {
-      console.warn('Supabase fetch exception:', err);
+    } catch (err: any) {
+      console.warn('Supabase fetch exception:', err?.message || err);
     }
   }
 
