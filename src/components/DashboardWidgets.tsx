@@ -54,13 +54,13 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
       {/* Top Banner */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-[#F5F5F5] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-[#F5F5F5] tracking-tight">
             Dashboard
           </h1>
-          <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-[#202028] text-slate-700 dark:text-[#9A9AA2] border border-slate-200 dark:border-white/10">
+          <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-[#202028] text-[#9CA3AF] border border-white/10">
             {stats.totalTransactionsCount}
           </span>
-          <span className="text-xs font-medium text-slate-500 dark:text-[#9A9AA2] hidden sm:inline">
+          <span className="text-xs font-medium text-[#9CA3AF] hidden sm:inline">
             • {currentMonthName}
           </span>
         </div>
@@ -79,15 +79,15 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         {/* Total Month Spend Card */}
         <div className="app-card p-5 app-card-hover">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-[#9A9AA2]">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#9CA3AF]">
               Total Spend
             </span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-100 dark:border-blue-500/20">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
               <CreditCard size={18} />
             </div>
           </div>
           <div className="mt-2">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-[#F5F5F5] tracking-tight">
+            <h2 className="text-2xl font-black text-[#F5F5F5] tracking-tight">
               {formatCurrency(stats.totalSpendCurrentMonth)}
             </h2>
           </div>
@@ -96,15 +96,15 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
               <span
                 className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold ${
                   isHigherThanLastMonth
-                    ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-500/20'
-                    : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+                    ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30'
+                    : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
                 }`}
               >
                 {isHigherThanLastMonth ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
                 <span>{Math.abs(stats.percentageChange)}% vs last month</span>
               </span>
             ) : (
-              <span className="text-slate-400 dark:text-[#9A9AA2] text-[11px]">Current Month</span>
+              <span className="text-[#9CA3AF] text-[11px]">Current Month</span>
             )}
           </div>
         </div>
@@ -112,40 +112,40 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         {/* Configurable Total Income & Remaining Balance Card */}
         <div className="app-card p-5 app-card-hover relative group">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-[#9A9AA2]">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#9CA3AF]">
               Total Income
             </span>
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setIsEditIncomeOpen(true)}
-                className="p-1 rounded-md text-slate-400 dark:text-[#9A9AA2] hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-[#2A2A32] transition-colors"
+                className="p-1 rounded-md text-[#9CA3AF] hover:text-[#F5F5F5] hover:bg-[#2A2A32] transition-colors"
                 title="Configure monthly total income"
               >
                 <Pencil size={14} />
               </button>
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
                 isOverBudget
-                  ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-500/20'
-                  : 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20'
+                  ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                  : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
               }`}>
                 <Wallet size={18} />
               </div>
             </div>
           </div>
           <div className="mt-2 flex items-center justify-between">
-            <h2 className="text-2xl font-black text-emerald-700 dark:text-emerald-400 tracking-tight">
+            <h2 className="text-2xl font-black text-emerald-400 tracking-tight">
               {formatCurrency(totalIncome)}
             </h2>
           </div>
           <div className="mt-2 flex items-center gap-1 text-[11px] font-medium">
             {isOverBudget ? (
-              <div className="flex items-center gap-1 text-rose-600 dark:text-rose-400 font-bold">
+              <div className="flex items-center gap-1 text-rose-400 font-bold">
                 <AlertTriangle size={13} className="shrink-0" />
                 <span>Remaining: {formatCurrency(remainingBalance)}</span>
               </div>
             ) : (
-              <div className="text-slate-500 dark:text-[#9A9AA2]">
-                <span>Remaining: <strong className="text-slate-700 dark:text-[#F5F5F5]">{formatCurrency(remainingBalance)}</strong></span>
+              <div className="text-[#9CA3AF]">
+                <span>Remaining: <strong className="text-[#F5F5F5]">{formatCurrency(remainingBalance)}</strong></span>
                 {totalIncome > 0 && <span className="ml-1">({percentageUsed}% spent)</span>}
               </div>
             )}
@@ -155,10 +155,10 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         {/* Top Category Card */}
         <div className="app-card p-5 app-card-hover">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-[#9A9AA2]">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#9CA3AF]">
               Top Category
             </span>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center border border-purple-100 dark:border-purple-500/20">
+            <div className="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20">
               <PieChart size={18} />
             </div>
           </div>
@@ -166,10 +166,10 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
             {stats.topCategory !== 'None' ? (
               <CategoryBadge category={stats.topCategory} size="md" />
             ) : (
-              <span className="text-sm font-semibold text-slate-400 dark:text-[#9A9AA2]">No data</span>
+              <span className="text-sm font-semibold text-[#9CA3AF]">No data</span>
             )}
           </div>
-          <p className="mt-3 text-[11px] text-slate-400 dark:text-[#9A9AA2] font-medium">
+          <p className="mt-3 text-[11px] text-[#9CA3AF] font-medium">
             Highest spend area
           </p>
         </div>
@@ -177,19 +177,19 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         {/* Average Daily Spend Card */}
         <div className="app-card p-5 app-card-hover">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-[#9A9AA2]">
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#9CA3AF]">
               Avg. Daily Spend
             </span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-100 dark:border-amber-500/20">
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
               <Zap size={18} />
             </div>
           </div>
           <div className="mt-2">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-[#F5F5F5] tracking-tight">
+            <h2 className="text-2xl font-black text-[#F5F5F5] tracking-tight">
               {formatCurrency(stats.averageDailySpend)}
             </h2>
           </div>
-          <p className="mt-3 text-[11px] text-slate-400 dark:text-[#9A9AA2] font-medium">
+          <p className="mt-3 text-[11px] text-[#9CA3AF] font-medium">
             Per day average
           </p>
         </div>
@@ -199,18 +199,18 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Category Breakdown */}
         <div className="lg:col-span-2 app-card p-6 space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-3">
+          <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <div className="flex items-center gap-2">
-              <PieChart size={18} className="text-slate-700 dark:text-[#F5F5F5]" />
-              <h2 className="text-base font-bold text-slate-900 dark:text-[#F5F5F5]">Expenses by Category</h2>
+              <PieChart size={18} className="text-[#F5F5F5]" />
+              <h2 className="text-base font-bold text-[#F5F5F5]">Expenses by Category</h2>
             </div>
-            <span className="text-xs text-slate-400 dark:text-[#9A9AA2] font-medium">
+            <span className="text-xs text-[#9CA3AF] font-medium">
               {stats.categoryBreakdown.length} active
             </span>
           </div>
 
           {stats.categoryBreakdown.length === 0 ? (
-            <div className="py-12 text-center text-slate-400 dark:text-[#9A9AA2] text-xs font-medium">
+            <div className="py-12 text-center text-[#9CA3AF] text-xs font-medium">
               No category data recorded for {currentMonthName}.
             </div>
           ) : (
@@ -222,16 +222,16 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
                     <div className="flex items-center justify-between text-xs font-medium">
                       <div className="flex items-center gap-2">
                         <CategoryBadge category={item.category} size="sm" />
-                        <span className="text-slate-400 dark:text-[#9A9AA2] text-[11px]">
+                        <span className="text-[#9CA3AF] text-[11px]">
                           ({item.count} {item.count === 1 ? 'item' : 'items'})
                         </span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-slate-400 dark:text-[#9A9AA2] text-[11px]">{item.percentage}%</span>
-                        <span className="font-bold text-slate-900 dark:text-[#F5F5F5]">{formatCurrency(item.total)}</span>
+                        <span className="text-[#9CA3AF] text-[11px]">{item.percentage}%</span>
+                        <span className="font-bold text-[#F5F5F5]">{formatCurrency(item.total)}</span>
                       </div>
                     </div>
-                    <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-[#121216] overflow-hidden">
+                    <div className="w-full h-2 rounded-full bg-[#121216] overflow-hidden">
                       <div
                         className={`h-full ${config.barColor} transition-all duration-500 rounded-full`}
                         style={{ width: `${Math.min(100, Math.max(2, item.percentage))}%` }}
@@ -247,11 +247,11 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
         {/* Recent Activity */}
         <div className="app-card p-6 space-y-4 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/10 pb-3 mb-3">
-              <h2 className="text-base font-bold text-slate-900 dark:text-[#F5F5F5]">Recent Activity</h2>
+            <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
+              <h2 className="text-base font-bold text-[#F5F5F5]">Recent Activity</h2>
               <Link
                 href="/expenses"
-                className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                className="text-xs font-semibold text-blue-400 hover:underline flex items-center gap-1"
               >
                 <span>View all</span>
                 <ArrowRight size={12} />
@@ -259,11 +259,11 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
             </div>
 
             {recentExpenses.length === 0 ? (
-              <div className="py-8 text-center text-slate-400 dark:text-[#9A9AA2] text-xs font-medium">
+              <div className="py-8 text-center text-[#9CA3AF] text-xs font-medium">
                 No recent transactions.
               </div>
             ) : (
-              <div className="divide-y divide-slate-100 dark:divide-white/5">
+              <div className="divide-y divide-white/5">
                 {recentExpenses.slice(0, 5).map((exp) => {
                   const isSelected = selectedExpenseId === exp.id;
                   return (
@@ -272,21 +272,21 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
                       onClick={() => onSelectExpense && onSelectExpense(exp)}
                       className={`py-2.5 px-2 rounded-lg flex items-center justify-between cursor-pointer transition-all ${
                         isSelected
-                          ? 'bg-slate-100/90 dark:bg-white/10 font-semibold'
-                          : 'hover:bg-slate-50 dark:hover:bg-white/5'
+                          ? 'bg-white/10 font-semibold'
+                          : 'hover:bg-white/5'
                       }`}
                     >
                       <div className="space-y-0.5 max-w-[140px]">
                         <CategoryBadge category={exp.category} size="sm" />
-                        <p className="text-[11px] text-slate-600 dark:text-[#9A9AA2] truncate">
+                        <p className="text-[11px] text-[#9CA3AF] truncate">
                           {exp.note ? exp.note : exp.date}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-900 dark:text-[#F5F5F5]">
+                        <span className="text-xs font-bold text-[#F5F5F5]">
                           {formatCurrency(exp.amount)}
                         </span>
-                        <ChevronRight size={14} className="text-slate-400 dark:text-[#9A9AA2] shrink-0" />
+                        <ChevronRight size={14} className="text-[#9CA3AF] shrink-0" />
                       </div>
                     </div>
                   );
@@ -295,10 +295,10 @@ export const DashboardWidgets: React.FC<DashboardWidgetsProps> = ({
             )}
           </div>
 
-          <div className="pt-3 border-t border-slate-100 dark:border-white/10">
+          <div className="pt-3 border-t border-white/10">
             <Link
               href="/expenses"
-              className="w-full py-2 rounded-lg border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#16161C] text-slate-700 dark:text-[#F5F5F5] hover:bg-slate-100 dark:hover:bg-[#202028] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+              className="w-full py-2 rounded-lg border border-white/10 bg-[#16161C] text-[#F5F5F5] hover:bg-[#202028] text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
             >
               <span>Manage Expenses</span>
               <ArrowRight size={14} />

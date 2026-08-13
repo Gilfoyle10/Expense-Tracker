@@ -4,7 +4,7 @@ import React from 'react';
 import { Expense } from '@/lib/types';
 import { formatCurrency, formatDate } from '@/lib/constants';
 import { CategoryBadge } from './CategoryBadge';
-import { Edit2, Trash2, Receipt, Calendar, FileText, ChevronRight, Plus } from 'lucide-react';
+import { Edit2, Trash2, Receipt, Calendar, FileText, Plus } from 'lucide-react';
 
 interface ExpenseListProps {
   expenses: Expense[];
@@ -29,7 +29,7 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
     return (
       <div className="app-card p-6 space-y-4">
         {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="h-14 rounded-lg bg-slate-100 dark:bg-white/5 animate-pulse" />
+          <div key={i} className="h-14 rounded-lg bg-white/5 animate-pulse" />
         ))}
       </div>
     );
@@ -38,12 +38,12 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
   if (expenses.length === 0) {
     return (
       <div className="app-card p-12 text-center space-y-4 select-none">
-        <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-[#202028] border border-slate-200 dark:border-white/10 flex items-center justify-center text-slate-400 dark:text-[#9A9AA2] mx-auto shadow-2xs">
+        <div className="w-12 h-12 rounded-xl bg-[#202028] border border-white/10 flex items-center justify-center text-[#9CA3AF] mx-auto shadow-2xs">
           <Receipt size={24} />
         </div>
         <div className="space-y-1">
-          <h3 className="text-base font-extrabold text-slate-900 dark:text-[#F5F5F5]">No transactions found</h3>
-          <p className="text-xs text-slate-500 dark:text-[#9A9AA2] max-w-sm mx-auto font-medium">
+          <h3 className="text-base font-extrabold text-[#F5F5F5]">No transactions found</h3>
+          <p className="text-xs text-[#9CA3AF] max-w-sm mx-auto font-medium">
             No expenses match your criteria. Add a new expense or clear filters.
           </p>
         </div>
@@ -64,7 +64,7 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-[#16161C] text-[10px] font-extrabold uppercase tracking-wider text-slate-400 dark:text-[#9A9AA2]">
+            <tr className="border-b border-white/10 bg-[#16161C] text-[10px] font-extrabold uppercase tracking-wider text-[#9CA3AF]">
               <th className="py-3 px-5">Date</th>
               <th className="py-3 px-4">Category</th>
               <th className="py-3 px-4">Note / Description</th>
@@ -72,7 +72,7 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
               <th className="py-3 px-4 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-white/5 text-xs">
+          <tbody className="divide-y divide-white/5 text-xs">
             {expenses.map((item) => {
               const isSelected = selectedExpenseId === item.id;
               return (
@@ -81,44 +81,44 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
                   onClick={() => onSelectExpense && onSelectExpense(item)}
                   className={`group cursor-pointer transition-colors ${
                     isSelected
-                      ? 'bg-slate-100/90 dark:bg-white/10 font-semibold'
-                      : 'hover:bg-slate-50/80 dark:hover:bg-white/5'
+                      ? 'bg-white/10 font-semibold'
+                      : 'hover:bg-white/5'
                   }`}
                 >
-                  <td className="py-3.5 px-5 whitespace-nowrap text-slate-600 dark:text-[#9A9AA2] font-medium">
+                  <td className="py-3.5 px-5 whitespace-nowrap text-[#9CA3AF] font-medium">
                     <div className="flex items-center gap-2">
-                      <Calendar size={14} className="text-slate-400 dark:text-[#9A9AA2]" />
+                      <Calendar size={14} className="text-[#9CA3AF]" />
                       <span>{formatDate(item.date)}</span>
                     </div>
                   </td>
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <CategoryBadge category={item.category} size="sm" />
                   </td>
-                  <td className="py-3.5 px-4 text-slate-800 dark:text-[#F5F5F5] font-medium max-w-xs truncate">
+                  <td className="py-3.5 px-4 text-[#F5F5F5] font-medium max-w-xs truncate">
                     {item.note ? (
                       <div className="flex items-center gap-1.5">
-                        <FileText size={13} className="text-slate-400 dark:text-[#9A9AA2] shrink-0" />
+                        <FileText size={13} className="text-[#9CA3AF] shrink-0" />
                         <span className="truncate">{item.note}</span>
                       </div>
                     ) : (
-                      <span className="text-slate-400 dark:text-[#9A9AA2] italic">No description</span>
+                      <span className="text-[#9CA3AF] italic">No description</span>
                     )}
                   </td>
-                  <td className="py-3.5 px-5 text-right whitespace-nowrap font-black text-slate-900 dark:text-[#F5F5F5]">
+                  <td className="py-3.5 px-5 text-right whitespace-nowrap font-black text-[#F5F5F5]">
                     {formatCurrency(item.amount)}
                   </td>
                   <td className="py-3.5 px-4 text-center whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-center gap-1">
                       <button
                         onClick={() => onEdit(item)}
-                        className="p-1.5 rounded-lg text-slate-400 dark:text-[#9A9AA2] hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                        className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-white hover:bg-white/10 transition-colors"
                         title="Edit expense"
                       >
                         <Edit2 size={14} />
                       </button>
                       <button
                         onClick={() => onDelete(item)}
-                        className="p-1.5 rounded-lg text-slate-400 dark:text-[#9A9AA2] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                        className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                         title="Delete expense"
                       >
                         <Trash2 size={14} />
@@ -133,7 +133,7 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
       </div>
 
       {/* Mobile Card List View */}
-      <div className="sm:hidden divide-y divide-slate-100 dark:divide-white/5">
+      <div className="sm:hidden divide-y divide-white/5">
         {expenses.map((item) => {
           const isSelected = selectedExpenseId === item.id;
           return (
@@ -141,17 +141,17 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
               key={item.id}
               onClick={() => onSelectExpense && onSelectExpense(item)}
               className={`p-4 space-y-3 cursor-pointer ${
-                isSelected ? 'bg-slate-100/90 dark:bg-white/10' : 'active:bg-slate-50 dark:active:bg-white/5'
+                isSelected ? 'bg-white/10' : 'active:bg-white/5'
               }`}
             >
               <div className="flex items-center justify-between">
                 <CategoryBadge category={item.category} size="sm" />
-                <span className="text-sm font-black text-slate-900 dark:text-[#F5F5F5]">
+                <span className="text-sm font-black text-[#F5F5F5]">
                   {formatCurrency(item.amount)}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-[#9A9AA2]">
+              <div className="flex items-center justify-between text-xs text-[#9CA3AF]">
                 <span className="truncate max-w-[200px]">
                   {item.note || 'No note'}
                 </span>
