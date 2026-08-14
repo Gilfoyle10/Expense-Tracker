@@ -100,10 +100,3 @@
    - In Supabase development mode, if *"Confirm email"* is enabled under Auth Providers, new user signups require email link confirmation before first sign-in.
 3. **Next.js Middleware Proxy Warning**:
    - Terminal outputs a minor Next.js 16 deprecation notice for middleware conventions, which does not impact production execution.
-
----
-
-## 📘 Comprehensive Project Documentation
-
-For full technical specifications, business rules, test cases, and AI prompts, consult the master documentation:
-- **[Project Documentation Artifact](file:///C:/Users/Administrator/.gemini/antigravity-ide/brain/8b1a1356-cb56-4be0-ac03-dc94ce8e8393/project_documentation.md)**
